@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BinomialHeap.cpp" />
+    <ClCompile Include="test_binomialHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binomialheap.hpp" />
