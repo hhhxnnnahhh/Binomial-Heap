@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include "binomialheap.hpp"
+#include <cassert>
 using namespace std;
 
 void testBasicOperations() {
@@ -684,6 +685,284 @@ void testUnionTimeComplexity() {
 
 
 
+void test_clear_empty_heap() {
+    BinomialHeap<int> h;
+    h.clear();
+    assert(h.isEmpty());
+    cout << "test_clear_empty_heap passed\n";
+}
+
+/* ---------------- TEST 2 ---------------- */
+void test_clear_single_node() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.clear();
+    assert(h.isEmpty());
+    cout << "test_clear_single_node passed\n";
+}
+
+/* ---------------- TEST 3 ---------------- */
+void test_clear_multiple_inserts() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(3);
+    h.insert(7);
+    h.insert(1);
+    h.insert(20);
+
+    h.clear();
+    assert(h.isEmpty());
+    cout << "test_clear_multiple_inserts passed\n";
+}
+
+/* ---------------- TEST 4 ---------------- */
+void test_clear_deep_heap() {
+    BinomialHeap<int> h;
+
+    // Create deeper trees
+    for (int i = 100; i >= 0; --i) {
+        h.insert(i);
+    }
+
+    h.clear();
+    assert(h.isEmpty());
+    cout << "test_clear_deep_heap passed\n";
+}
+
+/* ---------------- TEST 5 ---------------- */
+void test_clear_twice() {
+    BinomialHeap<int> h;
+    h.insert(5);
+    h.insert(2);
+
+    h.clear();
+    h.clear();  // should NOT crash
+    assert(h.isEmpty());
+    cout << "test_clear_twice passed\n";
+}
+
+/* ---------------- TEST 6 ---------------- */
+void test_heap_usable_after_clear() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(5);
+
+    h.clear();
+
+    h.insert(42);
+    assert(!h.isEmpty());
+    assert(h.getMin() == 42);
+
+    cout << "test_heap_usable_after_clear passed\n";
+}
+
+
+
+void test_isEmpty_basic() {
+    BinomialHeap<int> h;
+    assert(h.isEmpty());      // empty heap
+
+    h.insert(10);
+    assert(!h.isEmpty());     // not empty
+
+    h.clear();
+    assert(h.isEmpty());      // empty again
+
+    cout << "test_isEmpty_basic passed\n";
+}
+
+void test_assignment_deep_copy() {
+    BinomialHeap<int> h1;
+    h1.insert(10);
+    h1.insert(5);
+    h1.insert(20);
+
+    BinomialHeap<int> h2;
+    h2 = h1;
+
+    // Modify original
+    h1.extractMin();  // removes 5
+
+    // h2 must be unchanged
+    assert(h2.getMin() == 5);
+    assert(h2.size() == 3);
+
+    cout << "test_assignment_deep_copy passed\n";
+}
+
+
+void test_assignment_overwrites_existing_heap() {
+    BinomialHeap<int> h1;
+    h1.insert(1);
+    h1.insert(2);
+
+    BinomialHeap<int> h2;
+    h2.insert(100);
+    h2.insert(200);
+    h2.insert(300);
+
+    h2 = h1;
+
+    assert(h2.size() == h1.size());
+    assert(h2.getMin() == h1.getMin());
+
+    cout << "test_assignment_overwrites_existing_heap passed\n";
+}
+
+void test_self_assignment() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(2);
+    h.insert(15);
+
+    h = h;  // self-assignment
+
+    assert(h.size() == 3);
+    assert(h.getMin() == 2);
+
+    cout << "test_self_assignment passed\n";
+}
+
+
+void test_size_empty() {
+    BinomialHeap<int> h;
+    assert(h.size() == 0);
+    cout << "test_size_empty passed\n";
+}
+void test_size_single() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    assert(h.size() == 1);
+    cout << "test_size_single passed\n";
+}
+
+void test_size_multiple() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(5);
+    h.insert(20);
+    h.insert(3);
+
+    assert(h.size() == 4);
+    cout << "test_size_multiple passed\n";
+}
+void test_size_after_extract() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(5);
+    h.insert(20);
+
+    h.extractMin();   // removes 5
+
+    assert(h.size() == 2);
+    cout << "test_size_after_extract passed\n";
+}
+void test_size_after_clear() {
+    BinomialHeap<int> h;
+    h.insert(1);
+    h.insert(2);
+    h.insert(3);
+
+    h.clear();
+
+    assert(h.size() == 0);
+    cout << "test_size_after_clear passed\n";
+}
+
+
+void test_delete_existing() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(5);
+    h.insert(20);
+
+    h.deleteKey(10);
+
+    assert(h.size() == 2);
+    assert(h.getMin() == 5);
+    cout << "test_delete_existing passed\n";
+}
+void test_delete_min() {
+    BinomialHeap<int> h;
+    h.insert(1);
+    h.insert(5);
+    h.insert(10);
+
+    h.deleteKey(1);
+
+    assert(h.size() == 2);
+    assert(h.getMin() == 5);
+    cout << "test_delete_min passed\n";
+}
+void test_delete_nonexistent() {
+    BinomialHeap<int> h;
+    h.insert(10);
+
+    try {
+        h.deleteKey(99);
+        assert(false);  // should not reach
+    }
+    catch (...) {
+        cout << "test_delete_nonexistent passed\n";
+    }
+}
+void demo_delete_simple() {
+    BinomialHeap<int> h;
+    h.insert(10);
+    h.insert(5);
+    h.insert(20);
+
+    cout << "Before delete: min = " << h.getMin() << endl;
+    h.deleteKey(20);
+    cout << "After delete 20: min = " << h.getMin() << endl;
+    cout << "Heap size = " << h.size() << endl;
+}
+
+void test_node_size_single() {
+    BinomialNode<int> node(10);
+    int count = 0;
+    node.size(count);
+    assert(count == 1);
+    cout << "test_node_size_single passed\n";
+}
+void test_node_size_children_only() {
+    BinomialNode<int> root(10);
+    root.addChild(new BinomialNode<int>(20));
+    root.addChild(new BinomialNode<int>(30));
+
+    int count = 0;
+    root.size(count);
+    assert(count == 3);
+    cout << "test_node_size_children_only passed\n";
+}
+void test_node_size_grandchildren() {
+    BinomialNode<int> root(10);
+    BinomialNode<int>* child1 = new BinomialNode<int>(20);
+    BinomialNode<int>* child2 = new BinomialNode<int>(30);
+    root.addChild(child1);
+    root.addChild(child2);
+
+    child1->addChild(new BinomialNode<int>(40));
+    child1->addChild(new BinomialNode<int>(50));
+    child2->addChild(new BinomialNode<int>(60));
+
+    int count = 0;
+    root.size(count);
+    assert(count == 6);
+    cout << "test_node_size_grandchildren passed\n";
+}
+void demo_node_size() {
+    BinomialNode<int> root(10);
+    root.addChild(new BinomialNode<int>(20));
+    root.addChild(new BinomialNode<int>(30));
+
+    int count = 0;
+    root.size(count);
+    cout << "Node size = " << count << endl;  // Expected: 3
+}
+
+
+
 int main() {
     BinomialHeap<int> h;
     //testBasicOperations();
@@ -696,7 +975,31 @@ int main() {
     //testGetMinTimeComplexity();
     //testExtractMinTimeComplexity();
     //testDecreaseKeyTimeComplexity();
-    testUnionTimeComplexity();
+    //testUnionTimeComplexity();
+    // 
+    // 
+    //test_clear_empty_heap();
+    //test_clear_single_node();
+    //test_clear_multiple_inserts(); 
+    //test_isEmpty_basic();
 
+    //test_assignment_deep_copy()
+    //test_assignment_overwrites_existing_heap();
+    //test_self_assignment();
 
+    /*test_size_empty();
+    test_size_single();
+    test_size_multiple();
+    test_size_after_extract();
+    test_size_after_clear();*/
+
+   /* test_delete_existing();
+    test_delete_min();
+    test_delete_nonexistent();
+    demo_delete_simple();*/
+
+    test_node_size_single();
+    test_node_size_children_only();
+    test_node_size_grandchildren();
+    demo_node_size();
 }
